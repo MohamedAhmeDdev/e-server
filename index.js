@@ -4,6 +4,9 @@ const cors = require('cors');
 const { PORT } = require('./constant/index');
 const database = require("./config/database");
 const Auth = require('./Routes/Auth');
+const ClientRouter = require('./Routes/Client');
+const programController = require('./Routes/Program');
+const enrollmentController = require('./Routes/Enroll');
 
  
 
@@ -28,6 +31,9 @@ try {
 
 // Routes
 app.use('/auth', Auth);
+app.use('/client', ClientRouter);
+app.use('/program', programController)
+app.use('/enroll', enrollmentController)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
