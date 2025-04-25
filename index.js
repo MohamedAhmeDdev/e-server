@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const { PORT } = require('./constant/index');
-
+const database = require("./config/database");
 
 
  
@@ -18,6 +18,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors()); 
 
 
+// Database connection
+try {
+  database.authenticate();
+  console.log("you are connected to the database...");
+} catch (error) {
+  console.error("Connection error:", error);
+}
 
 // Routes
 
