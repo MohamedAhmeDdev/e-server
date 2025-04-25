@@ -10,9 +10,9 @@ const express = require('express');
 const programController = express.Router();
 
 programController.post('/', createProgram);
-programController.get('/programs', getAllPrograms);
-programController.get('/programs/:id', getProgramById);
-programController.put('/programs/:id', updateProgram);
-programController.delete('/programs/:id', deleteProgram);
+programController.get('/', getAllPrograms);
+programController.get('/:id', getProgramById);
+programController.put('/:id', updateProgram);
+programController.delete('/:id', deleteProgram);
 
 module.exports = programController;

@@ -2,9 +2,9 @@ const Program = require('../Model/Programs.JS');
 
 // Create Program
 exports.createProgram = async (req, res) => {
-  const { program_name, code, Disease, description } = req.body;
+  const { program_name, code, disease, description } = req.body;
 
-  if (!program_name || !code || !Disease || !description) {
+  if (!program_name || !code || !disease || !description) {
     return res.status(400).json({ success: false, message: 'All fields are required' });
   }
 
@@ -12,7 +12,7 @@ exports.createProgram = async (req, res) => {
     const newProgram = await Program.create({
       program_name,
       code,
-      Disease,
+      disease,
       description
     });
 
