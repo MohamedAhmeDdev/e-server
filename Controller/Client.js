@@ -77,12 +77,16 @@ exports.updateClient = async (req, res) => {
 };
 
 
-// Delete client
+
+// Delete client and their enrollments
 exports.deleteClient = async (req, res) => {
     try {
-        const id  = req.params.id;
+        const  id = req.params.id;
+        
+        const client = await Client.findByPk(id, {
+            include: [Enrollment]
+        });
 
-        const client = await Client.findByPk(id);
         if (!client) {
             return res.status(404).json({
                 success: false,
@@ -90,18 +94,24 @@ exports.deleteClient = async (req, res) => {
             });
         }
 
+        if (client.enrollments && client.enrollments.length > 0) {
+            await Enrollment.destroy({
+                where: { client_id: id }
+            });
+        }
+
         await client.destroy();
 
         res.json({
             success: true,
-            message: 'Client deleted successfully'
+            message: 'Client and all associated enrollment records deleted successfully'
         });
 
     } catch (error) {
         console.error('Error deleting client:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error while deleting client'
+            message: 'Server error while deleting client and enrollment records'
         });
     }
 };
