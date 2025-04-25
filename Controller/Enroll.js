@@ -1,10 +1,14 @@
 const Enrollment = require('../Model/Enrollment');
 const Client = require('../Model/Clients');
 const Program = require('../Model/Programs.JS');
+const User = require('../Model/User');
 
 // Create Enrollment
 exports.createEnrollment = async (req, res) => {
-  const { client_id, medicalHistory, program_name } = req.body;
+  const user_id = req.user.user_id
+  console.log(user_id);
+  
+  const { client_id, medicalHistory, program_name, } = req.body;
   console.log("Program names received:", program_name);
 
   if (!client_id || !medicalHistory || !program_name || program_name.length === 0) {
@@ -42,6 +46,7 @@ exports.createEnrollment = async (req, res) => {
           client_id: client_id,
           program_id: program.program_id,
           medical_history: medicalHistory,
+          user_id: user_id,
           enrolled_on: new Date(),
         })
       )
@@ -70,8 +75,10 @@ exports.getClientPrograms = async (req, res) => {
       const programs = await Enrollment.findAll({
           where: { client_id },
           include: [{
-              model: Program,
-          }]
+            model: Program,
+          },{
+            model:User
+        }]
       });
 
       res.json({

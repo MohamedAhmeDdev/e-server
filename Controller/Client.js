@@ -129,6 +129,8 @@ exports.getClientProfile = async (req, res) => {
                 include: [{
                     model: Program,
                     attributes: ['program_name', 'code'] 
+                },{
+                    model:User
                 }]
             }]
         });

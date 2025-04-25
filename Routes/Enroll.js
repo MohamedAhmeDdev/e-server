@@ -6,8 +6,9 @@ const {
 
 const express = require('express');
 const enrollmentController = express.Router();
+const authenticate = require('../Middleware/Auth');
 
-enrollmentController.post('/', createEnrollment);
+enrollmentController.post('/', authenticate, createEnrollment);
 enrollmentController.get('/enrollments/:client_id', getClientPrograms);
 enrollmentController.delete('/enrollments/:id', deleteEnrollment);
 
