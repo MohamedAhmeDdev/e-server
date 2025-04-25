@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const database = require('../config/database');
 const Program = require('./Programs.JS');
 const Client = require('./Clients');
+const User = require('./User');
 
 const Enrollment = database.define('enrollment', {
   enrollment_id: {
@@ -25,6 +26,14 @@ const Enrollment = database.define('enrollment', {
       key: 'program_id',
     },
   },
+  user_id : {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: User,
+      key: 'user_id',
+    },
+  },
   medical_history: {
     type: DataTypes.TEXT, 
   },
@@ -45,7 +54,8 @@ Enrollment.belongsTo(Client, { foreignKey: 'client_id' });
 Program.hasMany(Enrollment, { foreignKey: 'program_id' });
 Enrollment.belongsTo(Program, { foreignKey: 'program_id' });
 
-
+User.hasMany(Enrollment, { foreignKey: 'user_id' });
+Enrollment.belongsTo(User, { foreignKey: 'user_id' });
 
 database.sync().then(() => {
   console.log('enrollment table created!');
