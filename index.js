@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const { PORT } = require('./constant/index');
 const database = require("./config/database");
-
+const Auth = require('./Routes/Auth');
 
  
 
@@ -27,6 +27,7 @@ try {
 }
 
 // Routes
+app.use('/auth', Auth);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
