@@ -124,7 +124,6 @@ exports.getClientProfile = async (req, res) => {
     try {
         const  id  = req.params.id;
         const client = await Client.findByPk(id, {
-            attributes: ['client_id'],
             include: [{
                 model: Enrollment,
                 include: [{
