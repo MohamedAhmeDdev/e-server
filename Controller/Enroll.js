@@ -4,33 +4,60 @@ const Program = require('../Model/Programs.JS');
 
 // Create Enrollment
 exports.createEnrollment = async (req, res) => {
-  const { client_id, program_name, medical_history} = req.body;
+  const { client_id, medicalHistory, program_name } = req.body;
+  console.log("Program names received:", program_name);
 
-  if (!client_id || !program_name || !medical_history) {
+  if (!client_id || !medicalHistory || !program_name || program_name.length === 0) {
     return res.status(400).json({ success: false, message: 'Required fields are missing' });
   }
 
-  try {    
-    const findProgram = await Program.findOne({ where: { program_name: program_name } });
+  try {
+    const programsFound = await Program.findAll({
+      where: {
+        program_name: program_name,
+      },
+    });
 
-    if (!findProgram) {
-      return res.status(404).json({ success: false, message: 'Program not found' });
+    if (programsFound.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No programs found with the provided names' 
+      });
     }
 
-    const enrollment = await Enrollment.create({
-      client_id,
-      program_id: findProgram.program_id,
-      medical_history,
-      enrolled_on: new Date()
-    });
+    if (programsFound.length !== program_name.length) {
+      const foundNames = programsFound.map(p => p.program_name);
+      const missingNames = program_name.filter(name => !foundNames.includes(name));
+      
+      return res.status(404).json({
+        success: false,
+        message: 'Some programs not found',
+        missingPrograms: missingNames
+      });
+    }
+
+    const enrollments = await Promise.all(
+      programsFound.map((program) =>
+        Enrollment.create({
+          client_id: client_id,
+          program_id: program.program_id,
+          medical_history: medicalHistory,
+          enrolled_on: new Date(),
+        })
+      )
+    );
 
     res.status(201).json({
       success: true,
-      message: 'Enrollment created successfully',
-      data: enrollment
+      message: 'Enrollment(s) created successfully',
+      data: enrollments,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error while creating enrollment' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error while creating enrollment',
+      error: error.message 
+    });
   }
 };
 
@@ -44,7 +71,6 @@ exports.getClientPrograms = async (req, res) => {
           where: { client_id },
           include: [{
               model: Program,
-              attributes: ['program_name', 'code'] 
           }]
       });
 
@@ -55,7 +81,6 @@ exports.getClientPrograms = async (req, res) => {
       });
 
   } catch (error) {
-      console.error('Error fetching client programs:', error);
       res.status(500).json({
           success: false,
           message: 'Server error while fetching client programs'
