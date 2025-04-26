@@ -1,6 +1,7 @@
 const Client = require('../Model/Clients');
 const Enrollment = require('../Model/Enrollment');
 const Program = require('../Model/Programs.JS');
+const User = require('../Model/User');
 
 // Create Client
 exports.createClient = async (req, res) => {
